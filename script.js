@@ -128,10 +128,8 @@ function setLanguage(lang) {
     });
 
     // Actualizar estado activo de los botones de idioma
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-        const btnLang = btn.getAttribute('data-lang');
-        if (btnLang) btn.classList.toggle('active', btnLang === lang);
-    });
+    const buttons = document.querySelectorAll('.lang-btn[data-lang]');
+    buttons.forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
 
     // Guardar preferencia de idioma
     localStorage.setItem('language', lang);
@@ -140,7 +138,11 @@ function setLanguage(lang) {
 // Establecer inglés por defecto al cargar
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Cargar Idioma
-    const savedLang = localStorage.getItem('language') || 'en';
+    // Intenta obtener: 1. Preferencia guardada, 2. Idioma del navegador, 3. Inglés por defecto
+    const browserLang = navigator.language.split('-')[0];
+    const supportedLangs = Object.keys(translations);
+    const defaultLang = supportedLangs.includes(browserLang) ? browserLang : 'en';
+    const savedLang = localStorage.getItem('language') || defaultLang;
     setLanguage(savedLang);
 
     // Configurar listeners para botones de idioma (evita usar onclick en HTML)
